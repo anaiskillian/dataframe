@@ -1,14 +1,7 @@
-# requirements:
-# 1. raise exceptions for operations between series of different types and 
-# if the lengths do not match
-# 2. add comments to indicate the performance issues and how you would 
-# implement methods differently
-# 3. override the square bracket operator and instead return values by index
-# 4. implement arithmetic abilities for Series
-
-
-# class Series
-#   Ensures all elements match the specified type
+'''
+class Series
+Ensures all elements match the specified type
+'''
 
 class Series:
   def __init__(self, data, data_type):
@@ -19,48 +12,56 @@ class Series:
       if elm is None or isinstance(elm, data_type):
         self.data.append(elm)
       else:
-        raise ValueError(str(elm), " does not match required type")
+        raise ValueError(str(elm), " does not match required type.")
   
-  # if key is a list of Booleans, filter the Series based on list of Booleans
-  # key can also be another series of Booleans
-  # key can also be int to get that index 
-  # else, throw error
+  '''
+  If key is a list or Series of Booleans, filter the Series based on list of Booleans.
+  Key can also be int to get that index.
+  Else, throw error.
+  '''
   def __getitem__(self, key):
     if isinstance(key, list):
       for elm in key:
         if not isinstance(elm, bool):
-          raise ValueError("Not all Booleans in filtering list")
+          raise ValueError("Not all Booleans in filtering list.")
       # filter out values in series if False in that list
       return Series([d for d, k in zip(self.data, key) if k], self.data_type)
     # or it is a intger
     elif isinstance(key, int):
-      return self.data[key]
-    # or it is another series
+      if key < len(self.data):
+        return self.data[key]
+      else:
+        raise ValueError("Key out of range.")
+    # key is another series
     elif isinstance(key, Series) and key.data_type == bool:
       self.check_length(key)
       return Series([d for d, k in zip(self.data, key.data) if k], self.data_type)
     else:
       raise "Not Series indexable"
 
-  # check if a Series and another series are of the same length
+  '''
+  Check if a Series and another Series are of the same length.
+  '''
   def check_length(self, other):
     if len(other.data) != len(self.data):
       raise ValueError("Series are of different lengths")
     
-  # check if a Series and another series are of the same type
+  '''
+  Check if a Series and another Series are of the same type.
+  '''
   def check_types(self, other):
     if other.data_type != self.data_type:
       raise ValueError("Series are of different types")
   
-  # idea behind this function is that more checking can be added if needed
-  # avoid redundant code in all of the operation functions
   def check_valid(self, other):
     self.check_length(other)
     self.check_types(other)
 
-  # equality operation
-  # if Series types or lengths are different, throw exception
-  # else return Boolean series
+  '''
+  Equality operation.
+  If Series types or lengths are different, throw exception.
+  Else return Boolean series.
+  '''
   def __eq__(self, other):
     if isinstance(other, Series):
       self.check_valid(other)
@@ -91,11 +92,13 @@ class Series:
       self.check_valid(other)
       return Series([d < o for d, o in zip(self.data, other.data)], bool)
 
-  # for the ~ operator
+  # ~ operator
   def __invert__(self):
     return Series([not elm for elm in self.data], bool)
   
-  # using the word ''and'' between two series that are Boolean
+  '''
+  Using the word ''and'' between two series.
+  '''
   def __and__(self, other):
     if isinstance(other, Series):
       return Series([a and b for a, b in zip(self.data, other.data)], bool)
@@ -105,8 +108,12 @@ class Series:
   def __str__(self):
     return ', '.join(str(elm) for elm in self.data)
 
-# class DataFrame
-# Create a dataframe that supports many types of operations
+'''
+class DataFrame
+Create a dataframe that supports many types of operations.
+Input data is a dictionary with the key as the name of the series, and the 
+value as the Series
+'''
 class DataFrame:
   def __init__(self, data):
     self.columns = {}
