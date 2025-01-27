@@ -3,6 +3,10 @@ class Series
 Ensures all elements match the specified type
 '''
 
+# class DataType:
+#   def __init__(self, data_type):
+#     # check data_type
+
 class Series:
   def __init__(self, data, data_type):
     self.data = []
@@ -23,7 +27,7 @@ class Series:
     if isinstance(key, list):
       for elm in key:
         if not isinstance(elm, bool):
-          raise ValueError("Not all Booleans in filtering list.")
+          raise ValueError(f"Not all Booleans for {key} in filtering list.")
       # filter out values in series if False in that list
       return Series([d for d, k in zip(self.data, key) if k], self.data_type)
     # or it is a intger
@@ -44,7 +48,7 @@ class Series:
   '''
   def check_length(self, other):
     if len(other.data) != len(self.data):
-      raise ValueError("Series are of different lengths")
+      raise ValueError(f"Series {self.data} and {other.data} are of different lengths")
     
   '''
   Check if a Series and another Series are of the same type.
@@ -70,6 +74,7 @@ class Series:
   def __add__(self, other):
     # if other is an int or a float
     if isinstance(other, (int, float)):
+      
       return Series([elm + other for elm in self.data], self.data_type)
     elif isinstance(other, Series):
       # add the elements between two Series

@@ -70,7 +70,7 @@ print(df["Integers"] > 2)
 
 # Test 13: Arithmetic
 df_addition = df["Floats"] + 5.0
-print("Test 13:", df_addition)
+print(f"Test 13: {df_addition}")
 assert str(df["Floats"]) == "1.5, 2.5, 3.5", "Test 11 failed"
 
 # Test 14: Comparison
